@@ -27,7 +27,7 @@ imageName: my-wordpress
 imageTag: 1.0.0
 serviceType: LoadBalancer
 port: 8085
-targetPort: 80
+targetPort: 8085
 preferenceWeight: 100
 resources:
   requests:

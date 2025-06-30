@@ -1,0 +1,24 @@
+# This YAML defines an ArgoCD Application resource
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-app            # Name of your ArgoCD application
+  namespace: argocd          # The namespace where ArgoCD is installed
+spec:
+  project: default           # The ArgoCD project this application belongs to (usually 'default')
+  source:
+    repoURL: https://github.com/manaspradhan007/argocd-release-repo.git # URL of your Git repository
+    targetRevision: HEAD     # Which branch/tag/commit to sync from (e.g., 'HEAD' for main branch, 'v1.0.0' for a tag)
+    path: applications/demo-app # The path within your repository to the K8s manifests
+
+  destination:
+    server: https://kubernetes.default.svc # The Kubernetes API server URL for the target cluster
+                                           # For in-cluster deployments, this is the default
+    namespace: demoapp                # The namespace where the app will be deployed in the target cluster
+
+  syncPolicy:
+    automated:               # Enable automatic synchronization
+      prune: true            # Delete resources that are no longer in Git
+      selfHeal: true         # Automatically sync if application state drifts from Git
+      syncOptions:
+      - CreateNamespace=true # Automatically create the namespace if it doesn't exist

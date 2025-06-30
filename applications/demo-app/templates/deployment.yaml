@@ -27,6 +27,13 @@ spec:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
               memory: {{ .Values.resources.limits.memory }}
+        - name: nginx-exporter
+          image: nginx/nginx-prometheus-exporter:latest
+          ports:
+          - name: metrics-nginx
+            containerPort: 9113
+          args:
+            - --nginx.scrape-uri=http://localhost/nginx_status
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

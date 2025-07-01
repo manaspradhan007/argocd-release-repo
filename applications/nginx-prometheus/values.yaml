@@ -1,4 +1,4 @@
-# Demo app values file - DEVELOPMENT ENV
+# Nginx app values file - DEVELOPMENT ENV
 common:
   environment: dev
   registryName: task-container-registry.cr.de-fra.ionos.com
@@ -18,16 +18,16 @@ ingress:
       nginx.ingress.kubernetes.io/http2-max-header-size: "96k"
       meta.helm.sh/release-name: nginx
 
-# Demo app values:
-name: "demo-app-dev"
-namespace: demoapp 
-DNS: wordpress.task.de
+# nginx app values:
+name: "nginx-app-dev"
+namespace: nginx 
+DNS: nginx.task.de
 replicaCount: 2
-imageName: my-wordpress
+imageName: nginx-prometheus
 imageTag: 1.0.0
 serviceType: LoadBalancer
-port: 8085
-targetPort: 8085
+port: 8091
+targetPort: 8091
 preferenceWeight: 100
 resources:
   requests:

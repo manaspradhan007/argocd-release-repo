@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.common.imagePullSecretName}}
+      containers:
+        - name: {{ .Values.name }}
+          image: "{{ .Values.common.registryName }}/{{ .Values.imageName }}:{{ .Values.imageTag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.port }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+        - name: nginx-exporter
+          image: nginx/nginx-prometheus-exporter:latest
+          ports:
+          - name: metrics-nginx
+            containerPort: 9113
+          args:
+            - --nginx.scrape-uri=http://localhost/nginx_status
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: {{ .Values.preferenceWeight }}
+              podAffinityTerm:
+                labelSelector:
+                        app: {{ .Values.name }}
+                topologyKey: "kubernetes.io/hostname"
+          

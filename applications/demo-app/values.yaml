@@ -23,11 +23,11 @@ name: "demo-app-dev"
 namespace: demoapp 
 DNS: wordpress.task.de
 replicaCount: 2
-imageName: my-wordpress
+imageName: wordpress-app
 imageTag: 1.0.0
 serviceType: LoadBalancer
-port: 8085
-targetPort: 8085
+port: 8089
+targetPort: 8089
 preferenceWeight: 100
 resources:
   requests:

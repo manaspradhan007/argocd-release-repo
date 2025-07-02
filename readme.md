@@ -6,7 +6,7 @@ This repository serves as the single source of truth for defining and managing o
 
 - [Overview](#overview)
 - [Directory Structure](#directory-structure)
-- [Key Application: demo-app (WordPress)](#key-application-demo-app-wordpress)
+- [Key Application: nginx-prometheus (WordPress)](#key-application-nginx-prometheus-wordpress)
 - [Deployment Strategy](#deployment-strategy)
 - [How it Works](#how-it-works)
 - [Prerequisites](#prerequisites)
@@ -25,28 +25,28 @@ Applications are organized logically within the `applications/` directory:
 
 .
 ├── applications/
-│   └── demoapp/
-│       └── demo-app.yaml  # ArgoCD Application definition for the WordPress demo-app
+│   └── nginx-prometheus/
+│       └── nginx-prometheus.yaml  # ArgoCD Application definition for the nginx-prometheus
 ├── README.md              # This file
 └── .gitignore
 
 
 * **`applications/`**: Root directory for all ArgoCD Application definitions.
-* **`applications/demoapp/`**: Contains ArgoCD Application definitions related to the `demoapp` namespace or logical grouping.
-* **`demo-app.yaml`**: The specific ArgoCD `Application` resource that tells ArgoCD how to deploy the WordPress application.
+* **`applications/nginx-prometheus/`**: Contains ArgoCD Application definitions related to the `nginx-prometheus` namespace or logical grouping.
+* **`nginx-prometheus.yaml`**: The specific ArgoCD `Application` resource that tells ArgoCD how to deploy the WordPress application.
 
-## Key Application: demo-app (WordPress)
+## Key Application: nginx-prometheus (WordPress)
 
-This repository currently defines the ArgoCD `Application` for the `demo-app` WordPress instance.
+This repository currently defines the ArgoCD `Application` for the `nginx-prometheus` WordPress instance.
 
-* **Application Name:** `demo-app`
-* **Target Kubernetes Namespace:** `demoapp` (This is where the WordPress pods, services, etc., will be deployed in the cluster)
+* **Application Name:** `nginx-prometheus`
+* **Target Kubernetes Namespace:** `nginx-prometheus` (This is where the WordPress pods, services, etc., will be deployed in the cluster)
 * **Application Type:** WordPress (typically Nginx + PHP-FPM + MySQL/MariaDB)
 * **ArgoCD Project:** `default` (or your custom ArgoCD project name)
 
-### Source Code for `demo-app`
+### Source Code for `nginx-prometheus`
 
-The actual Kubernetes manifests (Deployment, Service, Ingress, etc.) for the WordPress `demo-app` are **not** in this repository. They are located in a separate Git repository that ArgoCD monitors:
+The actual Kubernetes manifests (Deployment, Service, Ingress, etc.) for the WordPress `nginx-prometheus` are **not** in this repository. They are located in a separate Git repository that ArgoCD monitors:
 
 * **WordPress App Repository URL:** `https://github.com/your-org/your-wordpress-app-repo.git` (Please replace with your actual WordPress application's Git repository URL)
 * **Path within Repo:** `k8s/wordpress` (Please replace with the actual path to your WordPress manifests within that repository)
@@ -54,20 +54,20 @@ The actual Kubernetes manifests (Deployment, Service, Ingress, etc.) for the Wor
 
 ## Deployment Strategy
 
-The `demo-app` ArgoCD Application is configured with an **Automated Sync Policy**. This means:
+The `nginx-prometheus` ArgoCD Application is configured with an **Automated Sync Policy**. This means:
 
 * **Continuous Monitoring:** ArgoCD constantly watches the WordPress application's source Git repository for changes.
 * **Automated Sync:** Any detected changes are automatically applied to the Kubernetes cluster.
 * **`prune: true`**: Resources that are removed from the Git repository will be automatically deleted from the cluster.
 * **`selfHeal: true`**: If the live state of resources in the Kubernetes cluster drifts from the Git-defined state, ArgoCD will automatically revert them to match Git.
-* **`CreateNamespace=true`**: The `demoapp` namespace will be automatically created in the target cluster if it doesn't already exist.
+* **`CreateNamespace=true`**: The `nginx-prometheus` namespace will be automatically created in the target cluster if it doesn't already exist.
 
 ## How it Works
 
-1.  **ArgoCD Application Definition:** The `demo-app.yaml` file in this repository defines the desired state for ArgoCD itself.
-2.  **ArgoCD Discovery:** Your ArgoCD instance (running in the `argocd` namespace of your cluster) is configured to monitor *this* GitOps repository. It discovers the `demo-app.yaml` Application resource.
-3.  **Application Synchronization:** Upon discovering the `demo-app` Application, ArgoCD then starts monitoring the specified `source.repoURL` (`https://github.com/manaspradhan007/argocd-release-repo.git`) and `source.path` (`k8s/wordpress`).
-4.  **Automated Deployment:** ArgoCD compares the manifests in the WordPress app repository with the actual state in the `demoapp` namespace of your Kubernetes cluster. Any discrepancies trigger an automated synchronization, ensuring your WordPress application is always up-to-date.
+1.  **ArgoCD Application Definition:** The `nginx-prometheus.yaml` file in this repository defines the desired state for ArgoCD itself.
+2.  **ArgoCD Discovery:** Your ArgoCD instance (running in the `argocd` namespace of your cluster) is configured to monitor *this* GitOps repository. It discovers the `nginx-prometheus.yaml` Application resource.
+3.  **Application Synchronization:** Upon discovering the `nginx-prometheus` Application, ArgoCD then starts monitoring the specified `source.repoURL` (`https://github.com/manaspradhan007/argocd-release-repo.git`) and `source.path` (`k8s/wordpress`).
+4.  **Automated Deployment:** ArgoCD compares the manifests in the WordPress app repository with the actual state in the `nginx-prometheus` namespace of your Kubernetes cluster. Any discrepancies trigger an automated synchronization, ensuring your WordPress application is always up-to-date.
 
 ## Prerequisites
 
@@ -90,20 +90,20 @@ To deploy the ArgoCD `Application` defined in this repository:
 2.  **Ensure `kubectl` & `helm` are configured** to connect to your target Kubernetes cluster.
 3.  **Apply the ArgoCD Application manifest:**
     ```bash
-    kubectl apply -f applications/demoapp/demo-app.yaml
+    kubectl apply -f applications/nginx-prometheus/nginx-prometheus.yaml
     ```
     This command tells your Kubernetes cluster to create the ArgoCD `Application` resource. ArgoCD will then pick up this new resource and begin managing the WordPress application.
 
 4.  **Monitor the deployment:**
-    You can track the synchronization status of `demo-app` via the ArgoCD UI or CLI:
+    You can track the synchronization status of `nginx-prometheus` via the ArgoCD UI or CLI:
     ```bash
     argocd app list
-    argocd app get demo-app
+    argocd app get nginx-prometheus
     ```
 
 ## Accessing Applications
 
-Once ArgoCD has successfully synchronized the `demo-app` WordPress application, it will be accessible via its configured Kubernetes Ingress.
+Once ArgoCD has successfully synchronized the `nginx-prometheus` WordPress application, it will be accessible via its configured Kubernetes Ingress.
 
 * **WordPress Application URL:** `http(s)://wordpress.task.de` (Replace with your actual WordPress Ingress URL)
 * **ArgoCD UI URL:** `http(s)://argocd.task.de` (Replace with your actual ArgoCD Ingress URL)

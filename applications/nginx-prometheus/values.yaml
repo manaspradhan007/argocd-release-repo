@@ -27,7 +27,7 @@ imageName: nginx-prometheus
 imageTag: 1.0.0
 serviceType: LoadBalancer
 port: 8091
-targetPort: 8080
+targetPort: 8091
 preferenceWeight: 100
 resources:
   requests:
